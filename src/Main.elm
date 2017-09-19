@@ -1,26 +1,27 @@
 import Html exposing (Html, button, div, text)
 import Html.Events exposing (onClick)
+import Board
+import Game
 
 main =
   Html.beginnerProgram { model = model, view = view, update = update }
 
-type alias Model = Int
+type alias Model = 
+  { board : Game.Board
+  }
 
 model : Model
 model =
-  0
+  { board = Game.initBoard
+  }
 
-type Msg = Increment
+type alias Msg = ()
 
 update : Msg -> Model -> Model
 update msg model = 
-  case msg of
-    Increment ->
-      model + 1
+  model
 
-view : Model -> Html Msg
+view : Model -> Html ()
 view model =
-  div []
-    [ div [] [ text (toString model) ]
-    , button [ onClick Increment ] [ text "+" ]
-    ]
+  model.board
+    |> Board.board 
