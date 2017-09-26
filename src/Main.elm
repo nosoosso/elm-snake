@@ -1,4 +1,5 @@
 import Html exposing (Html, button, div, text)
+import Html.Attributes exposing (rel, href)
 import Html.Events exposing (onClick)
 import Board
 import Game
@@ -23,5 +24,7 @@ update msg model =
 
 view : Model -> Html ()
 view model =
-  model.board
-    |> Board.board 
+  Html.body [] 
+    [ Html.node "link" [rel "stylesheet", href "main.css"][]
+    , Board.board model.board
+    ]

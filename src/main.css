@@ -1,0 +1,29 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.board {
+    margin: 0 auto;
+}
+
+.board-row {
+}
+
+.board-item {
+    height: 15px;
+    width: 15px;
+    border: 1px solid #b8e6c9;
+}
+
+.board-item--snake {
+    background-color: slategray;
+}
+
+.board-item--item {
+    background-color: pink;
+}
+
+.board-item--none {
+    background-color: #4ce68e;
+}
