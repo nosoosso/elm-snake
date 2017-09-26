@@ -1,7 +1,7 @@
 module Const exposing (..)
 
 boardSizeX : Int
-boardSizeX = 30
+boardSizeX = 16
 
 boardSizeY : Int
 boardSizeY = 10
