@@ -6,27 +6,24 @@ import Game
 
 board : Game.Board -> Html ()
 board board = 
-  table [] [genBoardHtml board]
+  boardHtml board
 
-genBoardHtml : Game.Board -> Html ()
-genBoardHtml board =
-  let
-   boardTr = 
-     board
-      |> Array.map genRow
-      |> Array.toList
-  in
-    table [] boardTr
-
-genRow : Game.BoardRow -> Html ()
-genRow row =
-   row 
+boardHtml : Game.Board -> Html ()
+boardHtml board =
+  board
     |> Array.map boardRowHtml
+    |> Array.toList
+    |> table []
+
+boardRowHtml : Game.BoardRow -> Html ()
+boardRowHtml row =
+   row 
+    |> Array.map boardItemHtml
     |> Array.toList
     |> tr []
 
-boardRowHtml : Game.BoardItem -> Html ()
-boardRowHtml item =
+boardItemHtml : Game.BoardItem -> Html ()
+boardItemHtml item =
   case item of
     Game.Snake life ->
       td [] [toString life |> text]
