@@ -1,30 +1,53 @@
 module Main exposing (..)
 
 import Html exposing (Html, button, div, text)
+import Time exposing (Time, second)
 import Board
+import Header
 import Game
 
 main =
-  Html.beginnerProgram { model = model, view = view, update = update }
+  Html.program
+   { init = init
+   , view = view
+   , update = update 
+   , subscriptions = subscriptions
+   }
 
 type alias Model = 
   { board : Game.Board
+  , time: Int
   }
 
-model : Model
-model =
+initModel : Model
+initModel =
   { board = Game.initBoard
+  , time = 0
   }
 
-type alias Msg = ()
+init : (Model, Cmd Msg)
+init =
+  (initModel, Cmd.none)
 
-update : Msg -> Model -> Model
+type Msg = Tick Time
+
+update : Msg -> Model -> (Model, Cmd Msg)
 update msg model = 
-  model
+  case msg of
+    Tick newTime ->
+      let
+        newModel = {model | time = model.time + 1}
+      in
+        (newModel, Cmd.none)
 
-view : Model -> Html ()
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Time.every second Tick
+
+view : Model -> Html msg
 view model =
   Html.body [] 
-    [ Board.board model.board
+    [ Header.header model.time
+    , Board.board model.board
     ]
 
