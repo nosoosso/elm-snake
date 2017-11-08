@@ -1,13 +1,18 @@
-# elm-snake
+# elm-webpack-starter
 
-## Build
+### Serve locally:
+```
+npm start
+```
+* Access app at `http://localhost:8080/`
+* Get coding! The entry point file is `src/elm/Main.elm`
+* Browser will refresh automatically on any file changes..
 
+
+### Build & bundle for prod:
 ```
-elm-make src/Main.elm
+npm run build
 ```
 
-## Run Develop Server
-
-```
-elm-reactor
-```
+* Files are saved into the `/dist` folder
+* To check it, open `dist/index.html`
