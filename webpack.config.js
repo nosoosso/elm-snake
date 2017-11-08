@@ -5,24 +5,22 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-const isProd = process.env.npm_lifecycle_event === 'build' ;
+const isProd = process.env.npm_lifecycle_event === 'build';
 
 const commonConfig = {
   entry: './src/index.js',
   output: {
-    path: path.resolve(__dirname, 'dist/'),
-    filename: '[name]-[hash].js',
+    path: path.join(__dirname, 'dist'),
+    filename: '[name].js',
   },
   resolve: {
-    extensions: ['.js', '.elm'],
+    extensions: ['', '.js', '.elm'],
     modules: ['node_modules']
   },
   module: {
     noParse: /\.elm$/,
-    rules: [
-      {
-      }
-    ]
+    rules: [{
+    }]
   }
 }
 

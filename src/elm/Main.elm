@@ -1,3 +1,5 @@
+module Main exposing ()
+
 import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (rel, href)
 import Html.Events exposing (onClick)
