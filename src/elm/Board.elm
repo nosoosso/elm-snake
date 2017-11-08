@@ -5,11 +5,11 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Game
 
-board : Game.Board -> Html ()
+board : Game.Board -> Html msg
 board board = 
   boardHtml board
 
-boardHtml : Game.Board -> Html ()
+boardHtml : Game.Board -> Html msg
 boardHtml board =
   let 
     row = 
@@ -21,14 +21,14 @@ boardHtml board =
       [ tbody [] row
       ]
 
-boardRowHtml : Game.BoardRow -> Html ()
+boardRowHtml : Game.BoardRow -> Html msg
 boardRowHtml row =
    row 
     |> Array.map boardItemHtml
     |> Array.toList
     |> tr [class "board-row"]
 
-boardItemHtml : Game.BoardItem -> Html ()
+boardItemHtml : Game.BoardItem -> Html msg 
 boardItemHtml item =
   case item of
     Game.Snake life ->
