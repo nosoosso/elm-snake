@@ -1,10 +1,11 @@
 module Main exposing (..)
 
 import Html exposing (Html, button, div, text)
-import Time exposing (Time, second)
+import Time exposing (Time, millisecond)
 import Board
-import Header
+import Const
 import Game
+import Header
 
 main =
   Html.program
@@ -42,7 +43,7 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Time.every second Tick
+    Time.every (Const.gameSpeed * millisecond) Tick
 
 view : Model -> Html msg
 view model =
