@@ -24,12 +24,12 @@ boardHtml board =
 boardRowHtml : Game.BoardRow -> Html msg
 boardRowHtml row =
    row 
-    |> Array.map boardItemHtml
+    |> Array.map boardActorHtml
     |> Array.toList
     |> tr [class "board-row"]
 
-boardItemHtml : Game.BoardItem -> Html msg 
-boardItemHtml item =
+boardActorHtml : Game.BoardActor -> Html msg 
+boardActorHtml item =
   case item of
     Game.Snake life ->
       td [class "board-item board-item--snake"] [toString life |> text]
