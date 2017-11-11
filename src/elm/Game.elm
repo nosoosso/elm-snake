@@ -9,6 +9,11 @@ type alias BoardRow = Array BoardActor
 
 type BoardActor = Snake Int | Item | None
 
+type alias SnakeHead = 
+  { x: Int
+  , y: Int
+  }
+
 initBoard : Board 
 initBoard = 
   let 
