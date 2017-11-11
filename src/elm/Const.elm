@@ -1,10 +1,16 @@
 module Const exposing (..)
 
+
 gameSpeed : Float
-gameSpeed = 250
+gameSpeed =
+    250
+
 
 boardSizeX : Int
-boardSizeX = 16
+boardSizeX =
+    16
+
 
 boardSizeY : Int
-boardSizeY = 10
+boardSizeY =
+    10
