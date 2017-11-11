@@ -27,13 +27,13 @@ boardHtml board =
 boardRowHtml : Game.BoardRow -> Html msg
 boardRowHtml row =
     row
-        |> Array.map boardActorHtml
+        |> Array.map cellHtml
         |> Array.toList
         |> tr [ class "board-row" ]
 
 
-boardActorHtml : Game.BoardActor -> Html msg
-boardActorHtml item =
+cellHtml : Game.Cell -> Html msg
+cellHtml item =
     case item of
         Game.Snake life ->
             td [ class "board-item board-item--snake" ] [ toString life |> text ]
@@ -41,5 +41,5 @@ boardActorHtml item =
         Game.Item ->
             td [ class "board-item board-item--item" ] [ text "" ]
 
-        Game.None ->
+        Game.Empty ->
             td [ class "board-item board-item--none" ] [ text "" ]
