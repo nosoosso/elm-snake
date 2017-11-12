@@ -5,7 +5,9 @@ import Keyboard
 import Random
 import Task exposing (..)
 import Time
+import ArrayUtils
 import Const
+import MaybeUtils
 
 
 init : ( Model, Cmd Msg )
@@ -17,6 +19,7 @@ type alias Model =
     { scene : Scene
     , playing : ModelPlaying
     , board : Board
+    , score : Int
     , randomSeed : Maybe Random.Seed
     }
 
@@ -43,6 +46,28 @@ type Msg
     | KeyDown Keyboard.KeyCode
 
 
+type alias Board =
+    Array BoardRow
+
+
+type alias BoardRow =
+    Array Cell
+
+
+type Cell
+    = Snake Int
+    | Item
+    | Empty
+
+
+type alias SnakeHead =
+    { x : Int
+    , y : Int
+    , direction : Direction
+    }
+
+type Direction = Top | Right | Bottom | Left
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
@@ -58,7 +83,7 @@ update msg model =
         Tick newTime ->
             let
                 newModel =
-                    updateTime model
+                    nextFrame model
             in
                 ( newModel, Cmd.none )
 
@@ -92,6 +117,7 @@ initModel =
         , lastDownedKey = Nothing
         }
     , board = initBoard
+    , score = 0
     , randomSeed = Nothing
     }
 
@@ -114,41 +140,34 @@ initPage =
 
 initGame : Model -> Model
 initGame model =
-    { model
-        | scene = Playing
-        , playing =
-            { initialized = True
-            , snakeHead = initSnakeHead
-            , time = 0
-            , lastDownedKey = Nothing
+    let
+        initializedBoard =
+            initBoard
+
+        newModel =
+            { model
+                | scene = Playing
+                , playing =
+                    { initialized = True
+                    , snakeHead = initSnakeHead
+                    , time = 0
+                    , lastDownedKey = Nothing
+                    }
+                , board = initializedBoard
+                , score = 0
             }
-    }
 
-
-type alias Board =
-    Array BoardRow
-
-
-type alias BoardRow =
-    Array Cell
-
-
-type Cell
-    = Snake Int
-    | Item
-    | Empty
-
-
-type alias SnakeHead =
-    { x : Int
-    , y : Int
-    }
+        setItemModel =
+            putItem newModel
+    in
+        setItemModel
 
 
 initSnakeHead : SnakeHead
 initSnakeHead =
     { x = Const.boardSizeX // 3
     , y = Const.boardSizeY // 2
+    , direction = Right
     }
 
 
@@ -157,13 +176,30 @@ initBoard =
     Array.repeat Const.boardSizeY (Array.repeat Const.boardSizeX Empty)
 
 
-putItem : Board -> Board
-putItem board =
+putItem : Model -> Model
+putItem model =
     let
         emptyCells =
-            collectEmptyCell board
+            collectEmptyCell model.board
+
+        seed =
+            MaybeUtils.getOrCrash "random seed is not initialized" model.randomSeed
+
+        ( selectedCellIndex, newSeed ) =
+            Random.step (Random.int 0 (Array.length emptyCells - 1)) seed
+
+        selectedCell =
+            ArrayUtils.getOrCrash "something wrong" selectedCellIndex emptyCells
+
+
+        ( x, y, _ ) =
+            selectedCell
+
+        newBoard =
+            setCell x y Item model.board
+
     in
-        board
+        { model | board = newBoard, randomSeed = Just newSeed }
 
 
 collectEmptyCell : Board -> Array ( Int, Int, Cell )
@@ -233,8 +269,8 @@ setCell x y cell board =
         Array.set y newBoardRow board
 
 
-updateTime : Model -> Model
-updateTime model =
+nextFrame : Model -> Model
+nextFrame model =
     let
         oldModelPlaying =
             model.playing
@@ -243,8 +279,11 @@ updateTime model =
             { oldModelPlaying
                 | time = oldModelPlaying.time + 1
             }
+
+        newTimeModel =
+            { model | playing = newModelPlaying }
     in
-        { model | playing = newModelPlaying }
+        newTimeModel
 
 
 handleKeyDown : Keyboard.KeyCode -> Model -> ( Model, Cmd Msg )

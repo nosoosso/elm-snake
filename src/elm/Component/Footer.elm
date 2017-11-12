@@ -1,12 +1,12 @@
-module Component.Header exposing (header)
+module Component.Footer exposing (footer)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Game
 
 
-header : Game.Model -> Html msg
-header model =
+footer : Game.Model -> Html msg
+footer model =
     let
         headerText =
             case model.scene of

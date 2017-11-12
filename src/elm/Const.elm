@@ -3,7 +3,7 @@ module Const exposing (..)
 
 gameSpeed : Float
 gameSpeed =
-    250
+    150
 
 
 boardSizeX : Int
