@@ -1,9 +1,9 @@
 module Main exposing (..)
 
 import Html exposing (Html, button, div, text)
-import Board
+import Component.Board as Board
+import Component.Header as Header
 import Game
-import Header
 
 
 main =

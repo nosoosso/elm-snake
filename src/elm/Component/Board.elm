@@ -1,4 +1,4 @@
-module Board exposing (board)
+module Component.Board exposing (board)
 
 import Array exposing (Array)
 import Html exposing (..)
