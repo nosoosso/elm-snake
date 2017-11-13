@@ -183,7 +183,7 @@ putItem model =
             collectEmptyCell model.board
 
         seed =
-            MaybeUtils.getOrCrash "random seed is not initialized" model.randomSeed
+            MaybeUtils.getOrCrash "random seed has not been initialized" model.randomSeed
 
         ( selectedCellIndex, newSeed ) =
             Random.step (Random.int 0 (Array.length emptyCells - 1)) seed
@@ -304,7 +304,7 @@ handleTitleKeyDown : Keyboard.KeyCode -> Model -> ( Model, Cmd Msg )
 handleTitleKeyDown keyCode model =
     case keyCode of
         32 ->
-            ( model, perform (\_ -> InitGame) (succeed ()) )
+            ( model, Task.perform identity (succeed InitGame) )
 
         otherwise ->
             ( model, Cmd.none )
