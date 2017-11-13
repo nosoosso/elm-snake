@@ -11,7 +11,7 @@ footer model =
         headerText =
             case model.scene of
                 Game.Playing ->
-                    "Time: " ++ toString model.playing.time |> text
+                    text ""
 
                 Game.Title ->
                     text "Press SPASE Key"
@@ -19,4 +19,4 @@ footer model =
                 Game.Dead ->
                     text "Press SPASE Key"
     in
-        div [ class "Header" ] [ headerText ]
+        div [ class "Footer" ] [ headerText ]

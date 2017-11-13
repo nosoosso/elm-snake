@@ -20,6 +20,7 @@ type alias Model =
     , playing : ModelPlaying
     , board : Board
     , score : Int
+    , time : Int
     , randomSeed : Maybe Random.Seed
     }
 
@@ -33,7 +34,6 @@ type Scene
 type alias ModelPlaying =
     { initialized : Bool
     , snakeHead : SnakeHead
-    , time : Int
     , lastDownedKey : Maybe Keyboard.KeyCode
     }
 
@@ -66,7 +66,13 @@ type alias SnakeHead =
     , direction : Direction
     }
 
-type Direction = Top | Right | Bottom | Left
+
+type Direction
+    = Top
+    | Right
+    | Bottom
+    | Left
+
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -113,11 +119,11 @@ initModel =
     , playing =
         { initialized = False
         , snakeHead = initSnakeHead
-        , time = 0
         , lastDownedKey = Nothing
         }
     , board = initBoard
     , score = 0
+    , time = 0
     , randomSeed = Nothing
     }
 
@@ -150,11 +156,11 @@ initGame model =
                 , playing =
                     { initialized = True
                     , snakeHead = initSnakeHead
-                    , time = 0
                     , lastDownedKey = Nothing
                     }
                 , board = initializedBoard
                 , score = 0
+                , time = 0
             }
 
         setItemModel =
@@ -191,13 +197,11 @@ putItem model =
         selectedCell =
             ArrayUtils.getOrCrash "something wrong" selectedCellIndex emptyCells
 
-
         ( x, y, _ ) =
             selectedCell
 
         newBoard =
             setCell x y Item model.board
-
     in
         { model | board = newBoard, randomSeed = Just newSeed }
 
@@ -271,19 +275,7 @@ setCell x y cell board =
 
 nextFrame : Model -> Model
 nextFrame model =
-    let
-        oldModelPlaying =
-            model.playing
-
-        newModelPlaying =
-            { oldModelPlaying
-                | time = oldModelPlaying.time + 1
-            }
-
-        newTimeModel =
-            { model | playing = newModelPlaying }
-    in
-        newTimeModel
+    { model | time = model.time + 1 }
 
 
 handleKeyDown : Keyboard.KeyCode -> Model -> ( Model, Cmd Msg )
