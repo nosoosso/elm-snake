@@ -37,13 +37,18 @@ type alias ModelPlaying =
     }
 
 
-type Msg
-    = InitPage
-    | InitGame
-    | SetRandomSeed Random.Seed
-    | Tick Time.Time
-    | KeyDown Keyboard.KeyCode
+type alias SnakeHead =
+    { x : Int
+    , y : Int
+    , direction : Direction
+    }
 
+
+type Direction
+    = Top
+    | Right
+    | Bottom
+    | Left
 
 type alias Board =
     Array BoardRow
@@ -58,20 +63,12 @@ type Cell
     | Item
     | Empty
 
-
-type alias SnakeHead =
-    { x : Int
-    , y : Int
-    , direction : Direction
-    }
-
-
-type Direction
-    = Top
-    | Right
-    | Bottom
-    | Left
-
+type Msg
+    = InitPage
+    | InitGame
+    | SetRandomSeed Random.Seed
+    | Tick Time.Time
+    | KeyDown Keyboard.KeyCode
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
