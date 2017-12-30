@@ -5,10 +5,9 @@ import Keyboard
 import Random
 import Task exposing (..)
 import Time
-import ArrayUtils
 import Const
-import MaybeUtils
-
+import Utils.ArrayUtils as ArrayUtils
+import Utils.MaybeUtils as MaybeUtils
 
 init : ( Model, Cmd Msg )
 init =

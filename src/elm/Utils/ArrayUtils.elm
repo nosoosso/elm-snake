@@ -1,4 +1,4 @@
-module ArrayUtils exposing (getOrCrash)
+module Utils.ArrayUtils exposing (getOrCrash)
 
 import Array exposing (Array)
 

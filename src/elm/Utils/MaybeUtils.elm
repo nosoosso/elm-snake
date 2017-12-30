@@ -1,4 +1,4 @@
-module MaybeUtils exposing (getOrCrash)
+module Utils.MaybeUtils exposing (getOrCrash)
 
 
 getOrCrash : String -> Maybe a -> a
