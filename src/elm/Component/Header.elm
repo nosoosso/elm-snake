@@ -10,10 +10,11 @@ header model =
     let
         timeText =
             "Time: " ++ toString model.time |> text
+
         scoreText =
             "Score: " ++ toString model.score |> text
     in
         div [ class "Header" ]
-            [ div [class "Header__item"] [timeText]
-            , div [class "Header__item"] [scoreText]
+            [ div [ class "Header__item" ] [ timeText ]
+            , div [ class "Header__item" ] [ scoreText ]
             ]

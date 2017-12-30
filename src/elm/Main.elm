@@ -1,7 +1,6 @@
 module Main exposing (..)
 
 import Html exposing (Html, button, div, text)
-
 import Component.App as App
 import Game
 

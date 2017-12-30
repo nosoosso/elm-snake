@@ -9,6 +9,7 @@ import Const
 import Utils.ArrayUtils as ArrayUtils
 import Utils.MaybeUtils as MaybeUtils
 
+
 init : ( Model, Cmd Msg )
 init =
     ( initModel, initPage )
@@ -33,13 +34,13 @@ type Scene
 type alias ModelPlaying =
     { initialized : Bool
     , snakeHead : SnakeHead
-    , lastDownedKey : Maybe Keyboard.KeyCode
     }
 
 
 type alias SnakeHead =
     { x : Int
     , y : Int
+    , length : Int
     , direction : Direction
     }
 
@@ -49,6 +50,7 @@ type Direction
     | Right
     | Bottom
     | Left
+
 
 type alias Board =
     Array BoardRow
@@ -63,12 +65,14 @@ type Cell
     | Item
     | Empty
 
+
 type Msg
     = InitPage
     | InitGame
     | SetRandomSeed Random.Seed
     | Tick Time.Time
     | KeyDown Keyboard.KeyCode
+
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -115,7 +119,6 @@ initModel =
     , playing =
         { initialized = False
         , snakeHead = initSnakeHead
-        , lastDownedKey = Nothing
         }
     , board = initBoard
     , score = 0
@@ -152,7 +155,6 @@ initGame model =
                 , playing =
                     { initialized = True
                     , snakeHead = initSnakeHead
-                    , lastDownedKey = Nothing
                     }
                 , board = initializedBoard
                 , score = 0
@@ -169,6 +171,7 @@ initSnakeHead : SnakeHead
 initSnakeHead =
     { x = Const.boardSizeX // 3
     , y = Const.boardSizeY // 2
+    , length = 1
     , direction = Right
     }
 
@@ -269,9 +272,127 @@ setCell x y cell board =
         Array.set y newBoardRow board
 
 
+mapCell : (Cell -> Cell) -> Board -> Board
+mapCell f old =
+    Array.map (\row -> Array.map f row) old
+
+
+decrementSnakeLength : Cell -> Cell
+decrementSnakeLength cell =
+    case cell of
+        Snake len ->
+            let
+                newLength =
+                    len - 1
+            in
+                if newLength > 0 then
+                    Snake newLength
+                else
+                    Empty
+
+        Item ->
+            Item
+
+        Empty ->
+            Empty
+
+
+mayGetItem : Model -> Model
+mayGetItem model =
+    let
+        { x, y } =
+            model.playing.snakeHead
+
+        cellOnHead =
+            getCell x y model.board
+
+        newModel =
+            case cellOnHead of
+                Item ->
+                    let
+                        newBoard =
+                            setCell x y Empty model.board
+
+                        oldPlaying =
+                            model.playing
+
+                        oldSnakeHead =
+                            oldPlaying.snakeHead
+
+                        newSnakeHead =
+                            { oldSnakeHead | length = oldSnakeHead.length + 1 }
+
+                        newPlaying =
+                            { oldPlaying | snakeHead = newSnakeHead }
+
+                        newModel =
+                            { model
+                                | board = newBoard
+                                , score = model.score + Const.itemScore
+                                , playing = newPlaying
+                            }
+
+                        itemPutted =
+                            putItem newModel
+                    in
+                        itemPutted
+
+                _ ->
+                    model
+    in
+        newModel
+
+
+moveHead : Model -> Model
+moveHead model =
+    let
+        { snakeHead } =
+            model.playing
+
+        newSnakeHead =
+            case snakeHead.direction of
+                Top ->
+                    { snakeHead | y = snakeHead.y - 1 }
+
+                Right ->
+                    { snakeHead | x = snakeHead.x + 1 }
+
+                Bottom ->
+                    { snakeHead | y = snakeHead.y + 1 }
+
+                Left ->
+                    { snakeHead | x = snakeHead.x - 1 }
+
+        oldPlaying =
+            model.playing
+
+        newPlaying =
+            { oldPlaying | snakeHead = newSnakeHead }
+    in
+        { model | playing = newPlaying }
+
+
 nextFrame : Model -> Model
 nextFrame model =
-    { model | time = model.time + 1 }
+    let
+        { x, y } =
+            model.playing.snakeHead
+
+        decremented =
+            { model | board = mapCell decrementSnakeLength model.board }
+
+        itemChecked =
+            mayGetItem decremented
+
+        snakeHeadPutted =
+            { itemChecked
+                | board = setCell x y (Snake itemChecked.playing.snakeHead.length) itemChecked.board
+            }
+
+        snakeHeadMoved =
+            moveHead snakeHeadPutted
+    in
+        { snakeHeadMoved | time = model.time + 1 }
 
 
 handleKeyDown : Keyboard.KeyCode -> Model -> ( Model, Cmd Msg )
@@ -301,12 +422,44 @@ handleTitleKeyDown keyCode model =
 handlePlayingKeyDown : Keyboard.KeyCode -> Model -> ( Model, Cmd Msg )
 handlePlayingKeyDown keyCode model =
     let
-        oldModelPlaying =
+        { snakeHead } =
             model.playing
 
+        oldPlaying =
+            model.playing
+
+        newSnakeHead =
+            case keyCode of
+                38 ->
+                    if snakeHead.direction /= Bottom then
+                        { snakeHead | direction = Top }
+                    else
+                        snakeHead
+
+                39 ->
+                    if snakeHead.direction /= Left then
+                        { snakeHead | direction = Right }
+                    else
+                        snakeHead
+
+                40 ->
+                    if snakeHead.direction /= Top then
+                        { snakeHead | direction = Bottom }
+                    else
+                        snakeHead
+
+                37 ->
+                    if snakeHead.direction /= Right then
+                        { snakeHead | direction = Left }
+                    else
+                        snakeHead
+
+                _ ->
+                    snakeHead
+
         newModelPlaying =
-            { oldModelPlaying
-                | lastDownedKey = Just keyCode
+            { oldPlaying
+                | snakeHead = newSnakeHead
             }
     in
         ( { model | playing = newModelPlaying }, Cmd.none )
